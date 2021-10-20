@@ -1,4 +1,5 @@
 class CommonError extends Error {}
+class DAOError extends Error {}
 class NotFoundError extends Error {}
 class UnauthorizationError extends Error {
   constructor(...param) {
@@ -14,5 +15,6 @@ module.exports = {
   CommonError,
   ForbiddenError,
   NotFoundError,
-  UnauthorizationError
+  UnauthorizationError,
+  DAOError
 }
