@@ -27,6 +27,7 @@ function loader(path, CRUD) {
   }
   this.duplicate.add(path);
   const parentRouter = this.parentRouter;
+  CRUD?.Middlewares && CRUD.Middlewares instanceof Array && parentRouter.use(path, ...CRUD.Middlewares);
   CRUD?.Create && parentRouter.post(path, CRUD.Create);
   CRUD?.Read && parentRouter.get(path, CRUD.Read);
   CRUD?.Update && parentRouter.put(path, CRUD.Update);
