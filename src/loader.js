@@ -48,6 +48,7 @@ function loader(path, CRUD) {
 }
 
 function loaderRoot(app) {
+  let mainErrorModel = null;
   const loaderChild = loader.bind({
     // 첫 바인딩은 express의 app을 그대로 반환합니다.
     parentRouter: app,
@@ -57,8 +58,18 @@ function loaderRoot(app) {
   // main 입장에서는 app에 직접 접근이 차단됩니다.
   Object.setPrototypeOf(loaderChild, {
     listen() {
-      app.use(require('./errorHandlar'));
+      if(!mainErrorModel) {
+        mainErrorModel = require('./error.default');
+      }
+      app.use(mainErrorModel.getErrorHandlar());
       app.listen(...arguments);
+    },
+    addErrorType(type, option) {
+      if(!mainErrorModel) {
+        const ErrorModel = require('./error.model');
+        mainErrorModel = new ErrorModel();
+      }
+      mainErrorModel.addErrorType(type, option);
     }
   });
   return loaderChild;
