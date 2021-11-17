@@ -39,7 +39,7 @@ function loader(path, CRUD) {
     parentRouter: null,
     duplicate: new Set(),
     getNewRouter() {
-      const childRouter = express.Router();
+      const childRouter = express.Router({ mergeParams: true });
       parentRouter.use(path, childRouter);
       return childRouter; // this.parentRouter = childRouter;
     }
