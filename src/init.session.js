@@ -8,7 +8,8 @@ module.exports = function initSession(app) {
     saveUninitialized: true,
     cookie: {
       secure: (!!env.HTTPS),
-      maxAge: ((process.env.DEBUG === '1') ? Infinity : (1000 * 60 * 30))
+      maxAge: ((process.env.DEBUG === '1') ? Infinity : (1000 * 60 * 30)),
+      httpOnly: true,
     }
   };
   app.set('trust proxy', 1);

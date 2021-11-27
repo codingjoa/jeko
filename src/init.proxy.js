@@ -5,7 +5,7 @@ module.exports = function initProxy(app) {
   if(corsWhitelist) {
     app.use(cors((req, callback) => {
       if(corsWhitelist.indexOf(req.header('Origin') !== -1)) {
-        callback(null, { origin: true, credentials: true });
+        callback(null, { origin: true, credentials: true, maxAge: 3600 });
       } else {
         callback(null, { origin: false });
       }
