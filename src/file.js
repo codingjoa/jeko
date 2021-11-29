@@ -14,7 +14,6 @@ class FileSystem {
   }
 
   createFormat(file) {
-    console.log(file);
     return {
       dir: this.dir,
       uuid: file.filename,
@@ -63,7 +62,7 @@ class FileSystem {
     const remover = (relativePath, option = {
       nameOnly: false
     }) => {
-      const delPath = option.nameOnly ? path.join(path.join(ROOT, this.dir, relativePath)) : path.join(path.join(ROOT, relativePath));
+      const delPath = option.nameOnly ? path.join(ROOT, this.dir, relativePath) : path.join(ROOT, relativePath);
       this.rm(delPath);
     };
     await callback(remover);
