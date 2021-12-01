@@ -7,9 +7,11 @@ module.exports = function initSession(app) {
     rolling: true,
     saveUninitialized: true,
     cookie: {
-      secure: (!!env.HTTPS),
+      //secure: (!!env.HTTPS),
+      secure: true,
       maxAge: ((process.env.DEBUG === '1') ? Infinity : (1000 * 60 * 30)),
       httpOnly: true,
+      sameSite: 'none',
     }
   };
   app.set('trust proxy', 1);

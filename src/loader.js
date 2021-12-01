@@ -70,7 +70,15 @@ function loaderRoot(app) {
         mainErrorModel = new ErrorModel();
       }
       mainErrorModel.addErrorType(type, option);
-    }
+    },
+    getProto() {
+      // app에 직접 접근하는 방법 (https 관련하여 유연하게 설계하지 못하여 직접 접근으로 정책 변경)
+      if(!mainErrorModel) {
+        mainErrorModel = require('./error.default');
+      }
+      app.use(mainErrorModel.getErrorHandlar());
+      return app;
+    },
   });
   return loaderChild;
 }
