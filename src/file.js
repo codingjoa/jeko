@@ -4,22 +4,79 @@ const events = require('events');
 const ROOT = process.cwd();
 
 class FileSystem {
-  constructor(file, dir) {
+  constructor(file, dir, optionV2) {
     const multiple = file instanceof Array;
     if(file) {
       this.file = multiple ? file : [ file ];
+    } else {
+      this.file = [];
     }
     this.dir = dir;
     this.cancel = false;
+    this.consume = false;
+    this.getSaveName = optionV2?.saveName ?? (file => file.tempName);
   }
 
   createFormat(file) {
     return {
-      dir: this.dir,
-      uuid: file.filename,
-      name: file.originalname,
-      extname: path.extname(file.originalname),
+      dir: this.dir, // deprecated
+      uuid: file.filename, // deprecated
+      name: file.originalname, // deprecated
+      extname: path.extname(file.originalname), // deprecated
+      //V2
+      baseDir: ROOT,
+      saveDir: this.dir,
+      tempPath: file.path,
+      tempName: file.filename,
+      fileName: file.originalname,
+      extName: path.extname(file.originalname),
     };
+  }
+
+  async serialize(callback) {
+    if(this.consume) {
+      return;
+    }
+    this.consume = true;
+
+    const files = this.file.map(file => this.createFormat(file)).map(file => ({
+      ...file,
+      saveName: this.getSaveName(file),
+    }));
+    try {
+      await callback({
+        size: this.size.bind(this),
+        [Symbol.iterator]: function* () {
+          for(const file of files) {
+            yield file;
+          }
+        },
+      });
+      await this.commitTemps(files);
+      await this.removeTemps(files);
+    } catch(err) {
+      await this.removeTemps(files);
+      throw err;
+    }
+  }
+
+  async commitTemps(files) {
+    for(const file of files) {
+      const tempPath = file.tempPath;
+      const newPath = path.join(ROOT, file.saveDir, file.saveName);
+      const R = fs.createReadStream(tempPath);
+      const W = fs.createWriteStream(newPath);
+      R.pipe(W);
+      await events.once(W, 'finish');
+    }
+  }
+
+  async removeTemps(files) {
+    this.consume = true;
+    for(const file of files) {
+      const tempPath = file.tempPath;
+      fs.existsSync(tempPath) && fs.rmSync(tempPath);
+    }
   }
 
   async add(callback, option) {
