@@ -1,6 +1,13 @@
 const { DAOError } = require('./Types/Error');
 const mariadb = require('mariadb');
-const config = require('./database.config');
+const config = {
+  host: process.env.MARIADB_HOST ?? 'localhost',
+  port: process.env.MARIADB_PORT ?? 3306,
+  user: 'ky',
+  database: process.env.MARIADB_NAME ?? 'react',
+  password: '1234',
+  connectionLimit: 5,
+};
 const pool = mariadb.createPool(config);
 class DAO {
   constructor() {

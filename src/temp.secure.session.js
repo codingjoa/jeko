@@ -1,6 +1,9 @@
-const env = require('./environment');
+const { SESSION } = require('./env');
+const session = require('express-session');
 module.exports = function initSession(app) {
-  const session = require('express-session');
+  if(!SESSION) {
+    return;
+  }
   const sessionOption = {
     secret: 'development',
     resave: false,
@@ -13,6 +16,5 @@ module.exports = function initSession(app) {
       sameSite: 'none',
     }
   };
-  app.set('trust proxy', 1);
   app.use(session(sessionOption));
 }
