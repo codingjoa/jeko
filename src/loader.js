@@ -56,6 +56,8 @@ function loaderRoot(app) {
   });
   // 최상위 loader는 유일하게 listen을 수행할 수 있습니다.
   // main 입장에서는 app에 직접 접근이 차단됩니다.
+
+  // Deprecated: 더 이상 사용되지 않을 것입니다. 
   Object.setPrototypeOf(loaderChild, {
     listen() {
       if(!mainErrorModel) {
